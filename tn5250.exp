@@ -1,0 +1,37 @@
+#!/usr/bin/expect -f
+
+# Variabel kredensial AS400
+set host "pub400.com:23"
+set username "JHONORGE1"
+set password "Nathamael404"  ;# Ganti dengan password sebenarnya
+
+# Buka sesi tn5250
+spawn tn5250 $host
+
+# Tunggu prompt untuk username dan masukkan username
+expect {
+    "Your user name:" {
+        send "$username\r"
+    }
+    timeout {
+        puts "Error: Timed out waiting for username prompt"
+        exit 1
+    }
+}
+
+# Coba pindahkan kursor ke kolom password dengan Tab
+send "\t"
+
+# Tunggu prompt password dan masukkan password
+expect {
+    "Password (max. 128):" {
+        send "$password\r"
+    }
+    timeout {
+        puts "Error: Timed out waiting for password prompt"
+        exit 1
+    }
+}
+
+# Tetap buka sesi untuk lanjut bekerja
+interact
