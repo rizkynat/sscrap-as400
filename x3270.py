@@ -8,39 +8,89 @@ myhost = 'pub400.com:23'
 screenrows = []
 
 # Use x3270 so you can see what is going on
-my3270 = Emulator(visible=True)
+em = Emulator(visible=True)
 
 def wait_for_screen_update(max_wait=5):
     """Wait for the screen to update or timeout after max_wait seconds."""
     start_time = time.time()
     while time.time() - start_time < max_wait:
-        if my3270.wait_for_field():
+        if em.wait_for_field():
             return True
         time.sleep(0.1)  # Small delay before retrying
     return False  # Timeout if screen doesn't update in max_wait seconds
 
 try:
     # Connect and clear the screen
-    my3270.connect(myhost)
+    em.connect(myhost)
     wait_for_screen_update()
-    my3270.exec_command(b"Clear")
+    em.exec_command(b"Clear")
     wait_for_screen_update()
-    
     # Enter username
-    my3270.send_string(mylogin)
-    wait_for_screen_update()  # Wait for the screen to be ready
-    
+    em.send_string(mylogin)
+    wait_for_screen_update()
     # Move to the password field and enter password
-    my3270.exec_command(b"Tab")  # Move the cursor to password field
-    my3270.send_string(mypass)
+    em.exec_command(b"Tab")  # Move the cursor to password field
+    # Enter password
+    em.send_string(mypass)
     wait_for_screen_update()
-    my3270.send_enter()  # Press Enter after entering the password
+    em.send_enter()
     wait_for_screen_update()
-    my3270.send_enter()
+    em.send_enter()
     # Verify if the Main Menu appears
-    if not my3270.string_found(1, 39, 'Main Menu'):
-        sys.exit('Error: Main Menu not found')
-    else:
+    if em.string_found(1, 39, 'Main Menu'):
         print('Login successfully!')
+    elif em.string_found(1, 33, 'Display Messages'):
+        em.exec_command(b"PF(3)")
+    else:
+        print('Login failed!')
+    print('==>6. Communications')
+    em.send_string('6')
+    em.send_enter()
+    wait_for_screen_update()
+    print('==>2. Messages')
+    em.send_string('2')
+    em.send_enter()
+    wait_for_screen_update()
+    print('==>1. Send a message')
+    em.send_string('1')
+    em.send_enter()
+    wait_for_screen_update()
+    print('Send Message Menu')
+    em.send_string('Hai apa kabar kamu!')
+    em.exec_command(b'Tab')
+    em.send_string('JHONORGE1')
+    wait_for_screen_update()
+    em.send_enter()
+    wait_for_screen_update()
+    if not em.string_found(1, 33, 'Display Messages'):
+        print('Send message failed!')
+    else:
+        print('Send message successfully!')
+    em.send_enter()
+    wait_for_screen_update()
+    print('==>3. Display messages')
+    em.send_string('3')
+    em.send_enter()
+    wait_for_screen_update()
+    em.send_enter()
+    wait_for_screen_update()
+    if not em.string_found(1, 33, 'Display Messages'):
+        print('Display all message failed!')
+    else:
+        print('Display all message successfully!')
+    wait_for_screen_update()
+    em.send_enter()
+    wait_for_screen_update()
+    em.exec_command(b"PF(12)")
+    wait_for_screen_update()
+    em.exec_command(b"PF(12)")
+    wait_for_screen_update()
+    em.send_string('90')
+    em.send_enter()
+    wait_for_screen_update()
+    if not em.string_found(1, 10, 'Welcome'):
+        print('Logout failed!')
+    else:
+        print('Logout successfully!')
 except Exception as e:
     print(f"There was a problem running the script: {e}")
