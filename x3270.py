@@ -7,7 +7,8 @@ mypass = 'Nathamael404'
 myhost = 'pub400.com:23'
 screenrows = []
 
-# Use x3270 so you can see what is going on
+# visible=True => x3270 so you can see what is going on
+# visible=False => s3270 background, no window/frame 
 em = Emulator(visible=True)
 
 def wait_for_screen_update(max_wait=5):
