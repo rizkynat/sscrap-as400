@@ -1,11 +1,26 @@
 import time, sys
 from py3270 import Emulator
+import mysql.connector
 
 delayt = 1    # Delay for each screen update in seconds
-mylogin = 'JHONORGE1'
-mypass = 'Nathamael404'
+mylogin = ''
+mypass = ''
 myhost = 'pub400.com:23'
 screenrows = []
+
+db = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="root",
+    database="sscrap_as400"
+)
+
+cursor = db.cursor()
+
+# Query data from the database
+cursor.execute("SELECT username, password FROM as400_login WHERE id=1")
+user_data = cursor.fetchone()
+mylogin, mypass = user_data
 
 # visible=True => x3270 so you can see what is going on
 # visible=False => s3270 background, no window/frame 
